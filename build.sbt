@@ -48,7 +48,10 @@ lazy val buildInfoSettings = {
 }
 
 lazy val testSettings = Seq(
-  testFrameworks += new TestFramework("munit.Framework")
+  testFrameworks += new TestFramework("munit.Framework"),
+  libraryDependencies ++= Seq(
+    Dependencies.`testkit` % Test
+  )
 )
 
 lazy val `root` = project

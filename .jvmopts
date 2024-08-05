@@ -1,0 +1,9 @@
+-XX:+PrintCommandLineFlags
+-Xms3G
+-Xmx3G
+-Xss6M
+-XX:ReservedCodeCacheSize=256M
+-Dquill.macro.log=false
+--add-opens=java.base/java.util=ALL-UNNAMED
+--add-opens=java.base/java.lang=ALL-UNNAMED
+--add-opens=java.base/java.lang.invoke=ALL-UNNAMED

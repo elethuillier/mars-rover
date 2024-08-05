@@ -1,7 +1,7 @@
 import scala.util.Try
 
 lazy val baseSettings = Seq(
-  scalaVersion                           := "2.13.14",
+  scalaVersion                           := "2.13.10",
   Compile / doc / sources                := Seq.empty,
   Compile / packageDoc / publishArtifact := false,
   scalacOptions ++= Seq(
@@ -35,7 +35,7 @@ lazy val buildInfoSettings = {
       scalaVersion,
       sbtVersion,
       action("lastCommitHash") {
-        import scala.sys.process._
+        import scala.sys.process.*
         // if the build is done outside of a git repository, we still want it to succeed
         Try("git rev-parse HEAD".!!.trim).getOrElse("?")
       }
@@ -77,8 +77,8 @@ lazy val startupTransition: State => State = { s: State =>
 
 lazy val preCommitSettings = Seq(
   installPreCommit := {
-    import scala.sys.process._
-    import scala.util._
+    import scala.sys.process.*
+    import scala.util.*
 
     val log = streams.value.log
     log.info("Install pre-commit hook")

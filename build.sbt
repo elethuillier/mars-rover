@@ -12,7 +12,8 @@ lazy val baseSettings = Seq(
   //    "-Xfatal-warnings"
   //  ),
   addCompilerPlugin(Dependencies.CompilerPlugins.`kind-projector`),
-  addCompilerPlugin(Dependencies.CompilerPlugins.`better-monadic-for`)
+  addCompilerPlugin(Dependencies.CompilerPlugins.`better-monadic-for`),
+  libraryDependencies ++= Dependencies.core
 )
 
 lazy val scalafixSettings = Seq(

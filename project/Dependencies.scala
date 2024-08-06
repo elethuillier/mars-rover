@@ -6,5 +6,14 @@ object Dependencies {
     val `better-monadic-for` = "com.olegpy"     %% "better-monadic-for" % "0.3.1"
   }
 
-  val `testkit` = "org.scalameta" %% "munit" % "1.0.0"
+  object Versions {
+    val pureconfig = "0.17.7"
+    val munit      = "1.0.0"
+  }
+
+  val core: Seq[ModuleID] = Seq(
+    "com.github.pureconfig" %% "pureconfig" % Versions.pureconfig
+  )
+
+  val `testkit` = "org.scalameta" %% "munit" % Versions.munit
 }

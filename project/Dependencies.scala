@@ -8,11 +8,13 @@ object Dependencies {
 
   object Versions {
     val pureconfig = "0.17.7"
-    val munit      = "1.0.0"
+    val enumeratum = "1.7.3"
+    val munit = "1.0.0"
   }
 
   val core: Seq[ModuleID] = Seq(
-    "com.github.pureconfig" %% "pureconfig" % Versions.pureconfig
+    "com.github.pureconfig" %% "pureconfig" % Versions.pureconfig,
+    "com.beachape"          %% "enumeratum" % Versions.enumeratum
   )
 
   val `testkit` = "org.scalameta" %% "munit" % Versions.munit

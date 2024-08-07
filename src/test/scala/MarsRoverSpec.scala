@@ -1,58 +1,66 @@
+import modules.rover.Rover
+import modules.rover.Rover.Position
+import modules.rover.plateau.Plateau
 import munit.FunSuite
+import pureconfig._
+import pureconfig.generic.auto._
 
 class MarsRoverSpec extends FunSuite {
+  private val config: Config = ConfigSource.default.loadOrThrow[Config]
+  private val plateau        = Plateau(5, 5)
+  private val program        = RoverProgram.make(config, plateau)
+
   test("parsePosition should correctly parse a valid position string") {
-    val position = MarsRover.parsePosition("1 2 N")
-    assertEquals(position, MarsRover.Position(1, 2, 'N'))
+    val position = Position.fromString("1 2 N")
+    assertEquals(position, Position(1, 2, 'N'))
   }
 
   test("MarsRover should turn left correctly") {
-    val position    = MarsRover.Position(1, 2, 'N')
-    val newPosition = MarsRover.turnLeft(position)
-    assertEquals(newPosition, MarsRover.Position(1, 2, 'W'))
+    val position    = Position(1, 2, 'N')
+    val newPosition = program.turnLeft(position)
+    assertEquals(newPosition, Position(1, 2, 'W'))
   }
 
   test("MarsRover should turn right correctly") {
-    val position    = MarsRover.Position(1, 2, 'N')
-    val newPosition = MarsRover.turnRight(position)
-    assertEquals(newPosition, MarsRover.Position(1, 2, 'E'))
+    val position    = Position(1, 2, 'N')
+    val newPosition = program.turnRight(position)
+    assertEquals(newPosition, Position(1, 2, 'E'))
   }
 
   test("MarsRover should move forward correctly") {
-    val position    = MarsRover.Position(1, 2, 'N')
-    val newPosition = MarsRover.moveForward(position, 5, 5)
-    assertEquals(newPosition, MarsRover.Position(1, 3, 'N'))
+    val position    = Position(1, 2, 'N')
+    val newPosition = program.moveForward(position)
+    assertEquals(newPosition, Position(1, 3, 'N'))
   }
 
   test("MarsRover should handle a series of instructions correctly") {
-    val position      = MarsRover.Position(1, 2, 'N')
-    val finalPosition = MarsRover.executeInstructions(position, "LMLMLMLMM", 5, 5)
-    assertEquals(finalPosition, MarsRover.Position(1, 3, 'N'))
+    val rover         = Rover(Position(1, 2, 'N'))
+    val finalPosition = program.executeInstructions(rover, "LMLMLMLMM")
+    assertEquals(finalPosition, Position(1, 3, 'N'))
   }
 
   test("MarsRover should not move out of plateau boundaries") {
-    val position      = MarsRover.Position(0, 0, 'S')
-    val finalPosition = MarsRover.executeInstructions(position, "M", 5, 5)
-    assertEquals(finalPosition, MarsRover.Position(0, 0, 'S'))
+    val position      = Rover(Position(0, 0, 'S'))
+    val finalPosition = program.executeInstructions(position, "M")
+    assertEquals(finalPosition, Position(0, 0, 'S'))
   }
 
   test("produce the correct final output for multiple rovers") {
-    val plateau = Array(5, 5)
     val instructions = List(
       ("1 2 N", "LMLMLMLMM"),
       ("3 3 E", "MMRMMRMRRM")
     )
 
     val results = instructions.map { case (start, moves) =>
-      val initialPosition = MarsRover.parsePosition(start)
-      MarsRover.executeInstructions(initialPosition, moves, plateau(0), plateau(1))
+      val rover = Rover(Position.fromString(start))
+      program.executeInstructions(rover, moves)
     }
 
     assertEquals(
       results,
       List(
-        MarsRover.Position(1, 3, 'N'),
-        MarsRover.Position(5, 1, 'E')
+        Position(1, 3, 'N'),
+        Position(5, 1, 'E')
       )
     )
   }

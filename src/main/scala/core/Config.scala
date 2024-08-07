@@ -1,9 +1,11 @@
+import modules.rover.Rover.Movement
+
 case class Config(
   movements: MovementsConfig,
   directions: DirectionsConfig
 )
 
-final case class MovementsConfig(left: String, right: String, move: String)
+final case class MovementsConfig(left: Movement, right: Movement, move: Movement)
 
 final case class DirectionsConfig(
   north: DirectionConfig,

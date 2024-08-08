@@ -7,15 +7,17 @@ object Dependencies {
   }
 
   object Versions {
-    val pureconfig = "0.17.7"
-    val enumeratum = "1.7.3"
-    val munit = "1.0.0"
+    val pureconfig      = "0.17.7"
+    val enumeratum      = "1.7.3"
+    val cats            = "3.5.4"
+    val munitCatsEffect = "2.0.0"
   }
 
   val core: Seq[ModuleID] = Seq(
-    "com.github.pureconfig" %% "pureconfig" % Versions.pureconfig,
-    "com.beachape"          %% "enumeratum" % Versions.enumeratum
+    "com.github.pureconfig" %% "pureconfig"  % Versions.pureconfig,
+    "com.beachape"          %% "enumeratum"  % Versions.enumeratum,
+    "org.typelevel"         %% "cats-effect" % Versions.cats
   )
 
-  val `testkit` = "org.scalameta" %% "munit" % Versions.munit
+  val `testkit` = "org.typelevel" %% "munit-cats-effect" % Versions.munitCatsEffect
 }

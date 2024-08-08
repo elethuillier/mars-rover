@@ -1,5 +1,6 @@
 package modules.rover
 
+import cats.effect.Sync
 import enumeratum.values.{StringEnum, StringEnumEntry}
 import pureconfig.ConfigConvert.viaStringOpt
 import pureconfig.ConfigReader
@@ -10,7 +11,7 @@ object Rover {
   final case class Position(x: Int, y: Int, direction: Char)
 
   object Position {
-    def fromString(position: String): Position = {
+    def fromString[F[_]: Sync](position: String): F[Position] = Sync[F].delay {
       val parts = position.split(" ")
       Position(parts(0).toInt, parts(1).toInt, parts(2).head)
     }

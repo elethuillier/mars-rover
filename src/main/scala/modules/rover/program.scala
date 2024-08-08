@@ -1,18 +1,20 @@
+import cats.syntax.all._
+import cats.effect.Sync
 import modules.rover.Rover
 import modules.rover.Rover.{Movement, Position}
 import modules.rover.plateau.Plateau
 
-trait RoverProgram {
-  def executeInstructions(rover: Rover, instructions: String): Position
-  def turnLeft(position: Position): Position
-  def turnRight(position: Position): Position
-  def moveForward(position: Position): Position
+trait RoverProgram[F[_]] {
+  def executeInstructions(rover: Rover, instructions: String): F[Position]
+  def turnLeft(position: Position): F[Position]
+  def turnRight(position: Position): F[Position]
+  def moveForward(position: Position): F[Position]
 }
 
 object RoverProgram {
-  final def make(config: Config, plateau: Plateau) = new Live(config, plateau)
+  final def make[F[_]: Sync](config: Config, plateau: Plateau): RoverProgram[F] = new Live(config, plateau)
 
-  final class Live(config: Config, plateau: Plateau) extends RoverProgram {
+  private[this] final class Live[F[_]: Sync](config: Config, plateau: Plateau) extends RoverProgram[F] {
 
     private val movements: Map[Char, Movement] = Map(
       'L' -> config.movements.left,
@@ -27,31 +29,33 @@ object RoverProgram {
       'W' -> config.directions.west
     )
 
-    override def executeInstructions(rover: Rover, instructions: String): Position =
-      instructions.foldLeft(rover.position)(executeInstruction)
+    override def executeInstructions(rover: Rover, instructions: String): F[Position] =
+      instructions.foldLeft(Sync[F].pure(rover.position)) { (position, instruction) =>
+        position.flatMap(executeInstruction(_, instruction))
+      }
 
-    private def executeInstruction(startPosition: Position, instruction: Char): Position = {
+    private def executeInstruction(startPosition: Position, instruction: Char): F[Position] = {
       val movement = movements(instruction)
       runMovement(movement, startPosition)
     }
 
-    private def runMovement(movement: Movement, startPosition: Position) = (movement match {
+    private def runMovement(movement: Movement, startPosition: Position): F[Position] = (movement match {
       case Movement.TurnLeft    => turnLeft _
       case Movement.TurnRight   => turnRight _
       case Movement.MoveForward => moveForward _
     })(startPosition)
 
-    override def turnLeft(position: Position): Position = {
+    override def turnLeft(position: Position): F[Position] = Sync[F].delay {
       val newDirection = directions(position.direction).left
       position.copy(direction = newDirection)
     }
 
-    override def turnRight(position: Position): Position = {
+    override def turnRight(position: Position): F[Position] = Sync[F].delay {
       val newDirection = directions(position.direction).right
       position.copy(direction = newDirection)
     }
 
-    override def moveForward(position: Position): Position = {
+    override def moveForward(position: Position): F[Position] = Sync[F].delay {
       val (moveX, moveY) = {
         val config = directions(position.direction)
         (config.moveX, config.moveY)
